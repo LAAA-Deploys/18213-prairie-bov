@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>18213 Prairie Avenue — SB 1123 Townhome Development Opportunity | Marcus &amp; Millichap</title>
 <meta name="description" content="Broker Opinion of Value for 18213 Prairie Ave, Torrance CA 90504 — ±20,600 SF C-2 / HCO infill site positioned for a 10-unit SB 1123 small-lot for-sale townhome subdivision.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -71,6 +73,36 @@
   .stat-box{background:#0a2540;color:#fff;padding:18px;border-radius:6px;text-align:center}
   .stat-num{font-size:24px;font-weight:700;color:#b8985a;margin-bottom:2px}
   .stat-lbl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#a8b3c2}
+  #comp-map{height:420px;border-radius:6px;margin:16px 0;border:1px solid #e6e9ef;z-index:0}
+  .leaflet-popup-content{font-size:13px;line-height:1.5}
+  .leaflet-popup-content strong{color:#0a2540}
+  .pin-subject{background:#b8985a;color:#0a2540;border:3px solid #0a2540;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+  .pin-comp{background:#0a2540;color:#fff;border:2px solid #fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+  .pin-inner{transform:rotate(45deg);line-height:1}
+  .ppbu-cell{font-weight:700;color:#1f6b35}
+  .laaa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+  .laaa-item{background:#f8fafc;border:1px solid #e6e9ef;border-radius:6px;padding:16px;border-left:3px solid #b8985a}
+  .laaa-addr{font-weight:700;color:#0a2540;font-size:14.5px;margin-bottom:4px}
+  .laaa-loc{font-size:12px;color:#666;margin-bottom:10px}
+  .laaa-stats{display:flex;justify-content:space-between;font-size:13px;border-top:1px solid #e6e9ef;padding-top:10px}
+  .laaa-stats > div{text-align:left}
+  .laaa-stats strong{display:block;font-size:14px;color:#0a2540;margin-bottom:1px}
+  .laaa-stats span{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+  .math-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+  .math-card{background:#f8fafc;border:1px solid #e6e9ef;border-radius:6px;padding:20px;border-top:3px solid #0a4a8a}
+  .math-card.rent{border-top-color:#1f6b35}
+  .math-card h3{margin-top:0;font-size:14px;color:#0a2540}
+  .math-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted #d9dde4;font-size:13.5px}
+  .math-row:last-child{border-bottom:none}
+  .math-row.total{font-weight:700;color:#0a2540;border-top:2px solid #0a2540;border-bottom:none;margin-top:6px;padding-top:10px;font-size:15px}
+  .math-row.sub{color:#666;font-size:12px}
+  .math-row.sub td{padding-left:14px}
+  .scenario-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0}
+  .scenario{background:#fff;border:1px solid #e6e9ef;border-radius:5px;padding:10px;text-align:center}
+  .scenario .s-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;font-weight:600}
+  .scenario .s-val{font-size:16px;color:#0a2540;font-weight:700}
+  .scenario .s-sub{font-size:11px;color:#666;margin-top:2px}
+  @media (max-width:760px){.math-grid{grid-template-columns:1fr}.scenario-row{grid-template-columns:1fr}}
   .team-leaders{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:18px}
   .team-card{background:#f8fafc;border:1px solid #e6e9ef;border-radius:6px;padding:22px;border-top:3px solid #b8985a;display:flex;flex-direction:column}
   .tc-photo{text-align:center;margin-bottom:8px}
@@ -224,65 +256,176 @@
 </section>
 
 <section>
-  <h2>Land Sale Comparables</h2>
-  <p>Four recent Torrance-area development land comparables, all within ~5 miles of the subject. Average sale price of <strong>$1,893,750</strong> &mdash; the subject's $3M ask reflects superior lot size and the SB 1123 by-right townhome envelope vs. these older land basis trades.</p>
+  <h2>Land Sale Comparables &mdash; Map &amp; Analytics</h2>
+  <p>Four Torrance-area development land trades within ~5 miles of the subject. Comps are normalized on two metrics: <strong>PPSF (price per lot SF)</strong> and <strong>PPBU (price per buildable unit)</strong> &mdash; based on each parcel's documented or feasible townhome yield. The closed-comp range frames where capital is pricing risk on this product type and city.</p>
+
+  <div id="comp-map"></div>
 
   <div class="scroll">
   <table>
     <thead>
-      <tr><th>Address</th><th>Lot SF</th><th>Sale Price</th><th>$/Lot SF</th><th>COE</th><th>Notes</th></tr>
+      <tr><th style="min-width:48px">Map</th><th>Address</th><th>Lot SF</th><th>Sale Price</th><th>PPSF<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1;font-size:10px">$ / lot SF</span></th><th>Yield</th><th>PPBU<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1;font-size:10px">$ / buildable unit</span></th><th>COE</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>18213 Prairie Ave</strong><br><span class="footer-note">Torrance 90504 &mdash; Subject</span></td>
+      <tr style="background:#fff7e6">
+        <td><span style="display:inline-block;width:26px;height:26px;background:#b8985a;color:#0a2540;border:2px solid #0a2540;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:22px">&#9733;</span></td>
+        <td><strong>18213 Prairie Ave</strong><br><span class="footer-note">Torrance 90504 &middot; Subject</span></td>
         <td>20,600</td>
         <td>$3,000,000</td>
         <td class="psf">$145.63</td>
+        <td>10 units<br><span class="footer-note">SB 1123 cap</span></td>
+        <td class="ppbu-cell">$300,000</td>
         <td>List</td>
-        <td>C-2 / HCO &middot; SB 1123 &middot; 10 townhomes</td>
       </tr>
       <tr>
+        <td><span style="display:inline-block;width:26px;height:26px;background:#0a2540;color:#fff;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:26px">A</span></td>
         <td>1639 W 228th St<br><span class="footer-note">Torrance 90501</span></td>
         <td>14,403</td>
         <td>$2,200,000</td>
         <td class="psf">$152.74</td>
+        <td>~7 units<br><span class="footer-note">SB 1123 feasible</span></td>
+        <td class="ppbu-cell">$314,286</td>
         <td>9/18/2025</td>
-        <td><span class="badge b-closed">Closed</span></td>
       </tr>
       <tr>
+        <td><span style="display:inline-block;width:26px;height:26px;background:#0a2540;color:#fff;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:26px">B</span></td>
         <td>4903 Torrance Blvd<br><span class="footer-note">Torrance 90503</span></td>
         <td>12,407</td>
         <td>$1,700,000</td>
         <td class="psf">$137.01</td>
+        <td>~6 units<br><span class="footer-note">SB 1123 feasible</span></td>
+        <td class="ppbu-cell">$283,333</td>
         <td>4/10/2025</td>
-        <td><span class="badge b-closed">Closed</span></td>
       </tr>
       <tr>
-        <td>3828 W 226th St<br><span class="footer-note">Torrance 90505</span></td>
-        <td>19,688</td>
+        <td><span style="display:inline-block;width:26px;height:26px;background:#0a2540;color:#fff;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:26px">C</span></td>
+        <td>3828 W 226th St<br><span class="footer-note">Torrance 90505 &middot; Southwood Riviera</span></td>
+        <td>19,646</td>
         <td>$1,700,000</td>
         <td class="psf">$86.34</td>
+        <td>10 units<br><span class="footer-note">Entitled (near-RTI)</span></td>
+        <td class="ppbu-cell">$170,000</td>
         <td>12/2/2024</td>
-        <td><span class="badge b-closed">Entitled 10 TH &middot; Inferior loc.</span></td>
       </tr>
       <tr>
-        <td>1610 W 218th St<br><span class="footer-note">Torrance 90501</span></td>
+        <td><span style="display:inline-block;width:26px;height:26px;background:#0a2540;color:#fff;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:26px">D</span></td>
+        <td>1610 W 218th St<br><span class="footer-note">Torrance 90501 &middot; Old Torrance</span></td>
         <td>18,003</td>
         <td>$1,975,000</td>
         <td class="psf">$109.70</td>
+        <td>11 + 11 ADU<br><span class="footer-note">Approved post-close</span></td>
+        <td class="ppbu-cell">$179,545</td>
         <td>3/25/2022</td>
-        <td><span class="badge b-closed">Approved 11 homes + 11 ADUs</span></td>
+      </tr>
+      <tr style="background:#0a2540;color:#fff;font-weight:600">
+        <td></td>
+        <td>AVERAGES (comps)</td>
+        <td>16,113</td>
+        <td>$1,893,750</td>
+        <td>$121.45</td>
+        <td>&mdash;</td>
+        <td style="color:#b8985a">$236,791</td>
+        <td>&mdash;</td>
       </tr>
     </tbody>
   </table>
   </div>
-  <p class="footer-note" style="margin-top:14px">Land-comp range: <strong>$86&ndash;$153/lot SF</strong>. Subject's $145.63/SF ask sits inside the closed band, justified by the larger 20,600 SF envelope, HCO-by-right path, and the new SB 1123 ministerial subdivision rights effective 7/1/2025.</p>
+  <p class="footer-note" style="margin-top:14px"><strong>PPSF range:</strong> $86&ndash;$153/lot SF (avg $121). <strong>PPBU range:</strong> $170K&ndash;$314K/door (avg $237K). Subject's $300K/door is bracketed by the closed band, justified by HCO by-right + SB 1123 ministerial path (effective 7/1/2025) that the older comps largely did not have access to at the time of sale.</p>
 
+  <h3>Comp-by-Comp Notes</h3>
   <div class="comp-card-row">
-    <div class="comp-card"><img src="images/comp_1639_w_228th.png" alt="1639 W 228th St"><div class="comp-body"><div class="comp-addr">1639 W 228th St</div><div class="comp-line">$2,200,000 &middot; 14,403 SF &middot; $152.74/SF<br>Closed 9/18/2025</div></div></div>
-    <div class="comp-card"><img src="images/comp_4903_torrance.png" alt="4903 Torrance Blvd"><div class="comp-body"><div class="comp-addr">4903 Torrance Blvd</div><div class="comp-line">$1,700,000 &middot; 12,407 SF &middot; $137.01/SF<br>Closed 4/10/2025</div></div></div>
-    <div class="comp-card"><img src="images/comp_3828_w_226th.png" alt="3828 W 226th St"><div class="comp-body"><div class="comp-addr">3828 W 226th St</div><div class="comp-line">$1,700,000 &middot; 19,688 SF &middot; $86.34/SF<br>Closed 12/2/2024 &middot; Entitled 10 TH</div></div></div>
-    <div class="comp-card"><img src="images/comp_1610_w_218th.png" alt="1610 W 218th St"><div class="comp-body"><div class="comp-addr">1610 W 218th St</div><div class="comp-line">$1,975,000 &middot; 18,003 SF &middot; $109.70/SF<br>Closed 3/25/2022 &middot; Approved 11 + 11 ADUs</div></div></div>
+    <div class="comp-card">
+      <img src="images/comp_1639_w_228th.png" alt="1639 W 228th St">
+      <div class="comp-body">
+        <div class="comp-addr">A &middot; 1639 W 228th St &mdash; Torrance 90501</div>
+        <div class="comp-line">
+          <strong>$2,200,000</strong> &middot; 14,403 SF &middot; <strong>$152.74/SF</strong><br>
+          Closed 9/18/2025 &middot; <strong>PPBU ~$314K</strong> (at 7-unit SB 1123 feasibility)<br>
+          <em>Zoning: CM-1VL (Commercial Manufacturing &mdash; Very Limited).</em> Improved with a 14BR / 8BA reentry-center building (1961) on a double lot. <strong>Sold unentitled</strong>; buyer relying on SB 1123 / SB 684 ministerial path for residential conversion. Highest PPSF of the comp set; demonstrates the market's willingness to underwrite an unentitled, fully tenanted property at premium dirt pricing for the ministerial yield opportunity.
+        </div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <img src="images/comp_4903_torrance.png" alt="4903 Torrance Blvd">
+      <div class="comp-body">
+        <div class="comp-addr">B &middot; 4903 Torrance Blvd &mdash; Torrance 90503</div>
+        <div class="comp-line">
+          <strong>$1,700,000</strong> &middot; 12,407 SF &middot; <strong>$137.01/SF</strong><br>
+          Closed 4/10/2025 &middot; <strong>PPBU ~$283K</strong> (at 6-unit SB 1123 feasibility)<br>
+          <em>Restaurant pad (La Zaa Pita Grill) on a hard corner.</em> Smallest lot in the comp set; <strong>sold unentitled</strong>. Buyer underwrites SB 1123 / SB 684 yield on commercially-zoned dirt. Strong central Torrance location offsetting tighter lot size.
+        </div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <img src="images/comp_3828_w_226th.png" alt="3828 W 226th St">
+      <div class="comp-body">
+        <div class="comp-addr">C &middot; 3828 W 226th St &mdash; Torrance 90505</div>
+        <div class="comp-line">
+          <strong>$1,700,000</strong> &middot; 19,646 SF &middot; <strong>$86.34/SF</strong><br>
+          Closed 12/2/2024 &middot; <strong>PPBU $170,000</strong> (entitled, near-RTI)<br>
+          <em>R-3 zoning &middot; Southwood Riviera.</em> <strong>Fully entitled 10-townhome project</strong>, plans through 1st submittal, near building-permit-ready. Each unit 2BR/2.5BA &middot; ±1,132 SF + 478 SF garage. Sets the lower bound for fully-entitled small-lot product. Original BOV note flagged this comp's "inferior location and lot."
+        </div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <img src="images/comp_1610_w_218th.png" alt="1610 W 218th St">
+      <div class="comp-body">
+        <div class="comp-addr">D &middot; 1610 W 218th St &mdash; Torrance 90501</div>
+        <div class="comp-line">
+          <strong>$1,975,000</strong> &middot; 18,003 SF &middot; <strong>$109.70/SF</strong><br>
+          Closed 3/25/2022 &middot; <strong>PPBU $179,545</strong> (11 homes only; $89,773 if ADUs included)<br>
+          <em>Old Torrance.</em> Purchased <strong>unentitled</strong>; buyer subsequently obtained approval for <strong>11 single-family homes + 11 ADUs</strong>. Closed pre-SB 1123 vintage, but demonstrates the by-right SFR + ADU stacking strategy that Torrance has accepted. PPBU is comparable to entitled C, but trade was 3+ years old &mdash; current replacement pricing has moved up.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer-note" style="margin-top:14px"><strong>PPBU methodology:</strong> For entitled comps (C, D), PPBU uses the documented unit count. For unentitled comps (A, B), PPBU is calculated at the conservative SB 1123-feasible yield (lot SF &divide; ~2,100 SF, rounded down to integer). Subject PPBU uses SB 1123 maximum yield of 10 units. ADU stacks are excluded from comp D's PPBU unless noted, since ADUs trade at a discount to fee-simple primary homes.</p>
+</section>
+
+<section>
+  <div class="section-tag">LAAA Active Inventory</div>
+  <h2>Other LAAA Land &amp; Development Listings</h2>
+  <p>The LA Apartment Advisors team currently has the following land and development sites on-market across Los Angeles. Each represents a different scale and entitlement profile &mdash; useful context for buyers comparing 18213 Prairie against other current opportunities.</p>
+
+  <div class="laaa-grid">
+    <div class="laaa-item">
+      <div class="laaa-addr">3219&ndash;3249 Overland Ave</div>
+      <div class="laaa-loc">Los Angeles, CA 90034</div>
+      <div class="laaa-stats">
+        <div><strong>$11.99M</strong><span>List Price</span></div>
+        <div><strong>100</strong><span>Buildable Units</span></div>
+      </div>
+    </div>
+    <div class="laaa-item">
+      <div class="laaa-addr">5511 Ethel Ave</div>
+      <div class="laaa-loc">Sherman Oaks, CA 91401</div>
+      <div class="laaa-stats">
+        <div><strong>$9.00M</strong><span>List Price</span></div>
+        <div><strong>199</strong><span>Buildable Units</span></div>
+      </div>
+    </div>
+    <div class="laaa-item">
+      <div class="laaa-addr">12335 Osborne Pl</div>
+      <div class="laaa-loc">Pacoima, CA 91331</div>
+      <div class="laaa-stats">
+        <div><strong>$4.25M</strong><span>List Price</span></div>
+        <div><strong>293</strong><span>Buildable Units</span></div>
+      </div>
+    </div>
+    <div class="laaa-item">
+      <div class="laaa-addr">10898 Olinda St</div>
+      <div class="laaa-loc">Sun Valley, CA 91352</div>
+      <div class="laaa-stats">
+        <div><strong>$2.50M</strong><span>List Price</span></div>
+        <div><strong>78</strong><span>Buildable Units</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="laaa-cta" style="text-align:center;margin-top:22px;padding-top:18px;border-top:1px solid #e6e9ef">
+    <a href="https://www.laaa.com" target="_blank" rel="noopener" style="display:inline-block;background:#0a2540;color:#fff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:600;font-size:14px;letter-spacing:0.5px">View All LAAA Listings at LAAA.com &rarr;</a>
+    <div style="font-size:13px;color:#666;margin-top:10px">Active inventory updated regularly &middot; <a href="https://www.laaa.com" target="_blank" rel="noopener" style="color:#0a4a8a">www.laaa.com</a></div>
   </div>
 </section>
 
@@ -388,24 +531,85 @@
 </section>
 
 <section>
-  <div class="section-tag">Pricing &amp; Yield</div>
-  <h2>10-Townhome SB 1123 Sellout Math</h2>
-  <p>Underwriting the by-right SB 1123 program at a blended for-sale exit modeled on the 90504 resale set above:</p>
+  <div class="section-tag">Project Math</div>
+  <h2>10-Unit 3BR / 2.5BA Townhome Underwriting</h2>
+  <p>Both exit strategies modeled at the same product spec: <strong>10 fee-simple townhomes, each 3 bedrooms / 2.5 baths, ±1,550 SF</strong>. Pricing pulled directly from the comp sets above &mdash; 90504 resale benchmarks for the for-sale exit, 90504 3BR rental benchmarks for the build-to-rent exit.</p>
 
   <div class="yield-grid">
     <div class="yield-item"><div class="yield-num">10</div><div class="yield-lbl">Fee-Simple Lots</div></div>
-    <div class="yield-item"><div class="yield-num">1,500 SF</div><div class="yield-lbl">Avg Unit Size</div></div>
-    <div class="yield-item"><div class="yield-num">$525/SF</div><div class="yield-lbl">Blended Resale</div></div>
-    <div class="yield-item"><div class="yield-num">$787K</div><div class="yield-lbl">Avg Sales Price</div></div>
-    <div class="yield-item"><div class="yield-num">$7.9M</div><div class="yield-lbl">Gross Sellout</div></div>
-    <div class="yield-item"><div class="yield-num">$300K</div><div class="yield-lbl">Land Basis / Door</div></div>
+    <div class="yield-item"><div class="yield-num">3BR / 2.5BA</div><div class="yield-lbl">Unit Mix</div></div>
+    <div class="yield-item"><div class="yield-num">1,550 SF</div><div class="yield-lbl">Avg Unit Size</div></div>
+    <div class="yield-item"><div class="yield-num">15,500 SF</div><div class="yield-lbl">Total Habitable</div></div>
+    <div class="yield-item"><div class="yield-num">$3.0M</div><div class="yield-lbl">Land Ask</div></div>
+    <div class="yield-item"><div class="yield-num">$300K</div><div class="yield-lbl">Land / Door</div></div>
   </div>
 
-  <div class="recommend">
-    <h3>Pricing Recommendation</h3>
-    <div class="price-band">$3,000,000</div>
-    <div class="price-band-sub">$145.63 / lot SF &middot; $300,000 / door</div>
-    <p style="margin-top:14px;margin-bottom:0;font-size:14px"><strong>Strategic note:</strong> The $3M ask is supported by (a) recent Torrance land trades closing $137&ndash;$153/SF, (b) a clear path to 10 ministerial for-sale lots under SB 1123 &mdash; an entitlement floor that the closed-comp set largely did not have, and (c) directly on-corridor resale pricing at $710/SF (North Pointe at 18082 Prairie) which builds in margin against a $525/SF underwriting assumption. The $300K/door land basis is in line with merchant-builder underwriting in the South Bay for small-lot SB 684 / SB 1123 product.</p>
+  <div class="math-grid">
+
+    <div class="math-card">
+      <h3 style="color:#0a4a8a">FOR-SALE EXIT &mdash; Gross Sellout</h3>
+      <p style="font-size:12.5px;color:#666;margin-bottom:14px">Pricing referenced to 90504 3BR townhome resale comps: 17510 Van Ness ($554/SF), 4021 W 182nd ($525/SF), 2062 Artesia (~$515/SF). New-construction premium assumed.</p>
+
+      <div class="scenario-row">
+        <div class="scenario"><div class="s-label">Conservative</div><div class="s-val">$525/SF</div><div class="s-sub">Resale parity</div></div>
+        <div class="scenario" style="border:2px solid #0a4a8a"><div class="s-label">Base Case</div><div class="s-val">$575/SF</div><div class="s-sub">+10% new-build</div></div>
+        <div class="scenario"><div class="s-label">Aggressive</div><div class="s-val">$625/SF</div><div class="s-sub">Strong absorption</div></div>
+      </div>
+
+      <div class="math-row"><span>Avg price / unit (Base $575/SF &times; 1,550 SF)</span><strong>$891,250</strong></div>
+      <div class="math-row"><span>&times; 10 units</span><strong>&times; 10</strong></div>
+      <div class="math-row total"><span>Gross Sellout (Base Case)</span><strong>$8,912,500</strong></div>
+      <div class="math-row sub"><span style="padding-left:14px">&middot; Conservative @ $525/SF</span><span>$8,137,500</span></div>
+      <div class="math-row sub"><span style="padding-left:14px">&middot; Aggressive @ $625/SF</span><span>$9,687,500</span></div>
+
+      <div class="math-row" style="margin-top:14px;padding-top:10px;border-top:1px solid #d9dde4"><span>Less: selling cost @ 5%</span><strong style="color:#a02020">($445,625)</strong></div>
+      <div class="math-row total" style="border-top:2px solid #1f6b35;color:#1f6b35"><span>Net Sellout (Base)</span><strong>$8,466,875</strong></div>
+
+      <p class="footer-note" style="margin-top:12px"><strong>Land basis check:</strong> $3.0M land &divide; $8.91M sellout = <strong>33.7% land / revenue</strong>. South Bay merchant-builder underwriting typically targets 25&ndash;35% &mdash; subject is at the top of band but within range given HCO walkability, on-corridor location, and direct comp at 18082 Prairie ($710/SF).</p>
+    </div>
+
+    <div class="math-card rent">
+      <h3 style="color:#1f6b35">BUILD-TO-RENT EXIT &mdash; Stabilized Income</h3>
+      <p style="font-size:12.5px;color:#666;margin-bottom:14px">Rents referenced to 90504 3BR townhome comps: 4114 Artesia ($2.48/SF), 18012 Manhattan Pl ($2.25/SF), 3627 W 169th ($2.72/SF). New-construction premium assumed.</p>
+
+      <div class="scenario-row">
+        <div class="scenario"><div class="s-label">Conservative</div><div class="s-val">$2.40/SF</div><div class="s-sub">$3,720/mo</div></div>
+        <div class="scenario" style="border:2px solid #1f6b35"><div class="s-label">Base Case</div><div class="s-val">$2.65/SF</div><div class="s-sub">$4,108/mo</div></div>
+        <div class="scenario"><div class="s-label">Aggressive</div><div class="s-val">$2.90/SF</div><div class="s-sub">$4,495/mo</div></div>
+      </div>
+
+      <div class="math-row"><span>Monthly rent / unit (Base @ $2.65/SF &times; 1,550 SF)</span><strong>$4,108</strong></div>
+      <div class="math-row"><span>&times; 10 units &times; 12 months</span><strong>$492,900</strong></div>
+      <div class="math-row total"><span>Gross Potential Rent (GPR)</span><strong>$492,900</strong></div>
+      <div class="math-row sub"><span style="padding-left:14px">&middot; Conservative @ $2.40/SF</span><span>$446,400</span></div>
+      <div class="math-row sub"><span style="padding-left:14px">&middot; Aggressive @ $2.90/SF</span><span>$539,400</span></div>
+
+      <div class="math-row" style="margin-top:14px;padding-top:10px;border-top:1px solid #d9dde4"><span>Less: vacancy &amp; collection @ 5%</span><strong style="color:#a02020">($24,645)</strong></div>
+      <div class="math-row"><span>Effective Gross Income (EGI)</span><strong>$468,255</strong></div>
+      <div class="math-row"><span>Less: OpEx (taxes, insurance, R&amp;M, mgmt) @ 28%</span><strong style="color:#a02020">($131,111)</strong></div>
+      <div class="math-row total" style="border-top:2px solid #1f6b35;color:#1f6b35"><span>Stabilized NOI (Base)</span><strong>$337,144</strong></div>
+
+      <p class="footer-note" style="margin-top:12px"><strong>Cap rate sensitivity (Base NOI $337K):</strong> @ 4.50% cap = <strong>$7.49M</strong> &middot; @ 4.25% cap = <strong>$7.93M</strong> &middot; @ 4.00% cap = <strong>$8.43M</strong>. New-construction South Bay coastal townhomes have recently traded 4.0&ndash;4.5% cap.</p>
+    </div>
+
+  </div>
+
+  <div class="recommend" style="margin-top:24px">
+    <h3>Side-by-Side Comparison &mdash; Base Case</h3>
+    <table style="margin-top:8px">
+      <thead>
+        <tr><th></th><th>For-Sale Exit</th><th>Build-to-Rent Exit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Pricing benchmark</strong></td><td>$575/SF (10% above resale)</td><td>$2.65/SF/mo</td></tr>
+        <tr><td><strong>Per-unit revenue / rent</strong></td><td>$891,250 sale price</td><td>$4,108 / month</td></tr>
+        <tr><td><strong>10-unit annual</strong></td><td>$8.91M one-time sellout</td><td>$492,900 GPR / $337K NOI</td></tr>
+        <tr><td><strong>Net to developer (10 units)</strong></td><td>$8.47M (after 5% selling)</td><td>$7.49M&ndash;$8.43M (cap-rate dependent)</td></tr>
+        <tr><td><strong>Land basis vs. exit</strong></td><td>34% (land &divide; gross)</td><td>~38&ndash;40% (land &divide; stabilized value)</td></tr>
+        <tr><td><strong>Time to capital recovery</strong></td><td>~24&ndash;30 mo from close</td><td>~24 mo build + perpetual hold</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;margin-bottom:0;font-size:14px"><strong>Strategic takeaway:</strong> For-sale exit is the higher absolute return; build-to-rent is the de-risking fallback. Both pencil against the $3.0M land basis at $300K/door &mdash; for-sale shows a 34% land-to-revenue ratio within South Bay merchant-builder norms, and rental NOI at $337K supports a $7.5M+ stabilized value at market cap rates.</p>
   </div>
 </section>
 
@@ -441,6 +645,23 @@
   <h2>Listing Team</h2>
   <p>This offering is co-listed by the LA Apartment Advisors (LAAA) team and the Agnew | Serling Group at Marcus &amp; Millichap &mdash; two of Southern California's most active investment sales practices, with combined volume exceeding <strong>$2.4 billion</strong> in closed transactions.</p>
 
+  <div style="background:linear-gradient(135deg,#0a2540 0%,#143b6b 100%);color:#fff;border-radius:8px;padding:24px 28px;margin:18px 0 8px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center">
+    <div>
+      <div style="font-size:11px;color:#b8985a;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px">Contact the Listing Team</div>
+      <div style="font-size:22px;font-weight:700;line-height:1.2;margin-bottom:8px">Marcus &amp; Millichap &mdash; Encino Office</div>
+      <div style="font-size:13.5px;color:#cbd5e1;line-height:1.6">16830 Ventura Blvd, Suite 100<br>Encino, CA 91436</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;color:#b8985a;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px">Office</div>
+      <a href="tel:+18182122700" style="display:inline-block;color:#fff;font-size:26px;font-weight:700;text-decoration:none;letter-spacing:0.5px">(818) 212-2700</a>
+      <div style="font-size:13px;color:#cbd5e1;margin-top:10px">
+        <a href="https://www.laaa.com" target="_blank" rel="noopener" style="color:#b8985a;text-decoration:none;font-weight:600">www.laaa.com</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://agnewserling.com" target="_blank" rel="noopener" style="color:#b8985a;text-decoration:none;font-weight:600">agnewserling.com</a>
+      </div>
+    </div>
+  </div>
+
   <div class="team-leaders">
     <div class="team-card">
       <div class="tc-photo"><img class="headshot-img-lg" src="images/headshot_filip.png" alt="Filip Niculete"></div>
@@ -448,8 +669,10 @@
       <div class="tc-title-lg">Senior Managing Director, Investments</div>
       <p class="tc-bio">Co-founder of the LAAA Team at Marcus &amp; Millichap. Born in Romania and raised in the San Fernando Valley, Filip began his M&amp;M career in 2011 after studying Finance at San Diego State University. He and the LAAA Team have closed over $1.4 billion in multifamily and land transactions across Los Angeles.</p>
       <div class="tc-contact-lg">
+        <a href="tel:+18182122748" style="font-size:18px;font-weight:700;color:#0a2540;display:block;margin-bottom:6px">(818) 212-2748</a>
         <a href="mailto:Filip.Niculete@marcusmillichap.com">Filip.Niculete@marcusmillichap.com</a><br>
-        <a href="tel:+18182122748">(818) 212-2748</a> &middot; CalDRE #01905352
+        <span style="color:#666;font-size:12px">CalDRE #01905352</span><br>
+        <a href="https://www.laaa.com" target="_blank" rel="noopener" style="color:#b8985a;font-size:12px;font-weight:600">www.laaa.com &rarr;</a>
       </div>
     </div>
     <div class="team-card">
@@ -458,8 +681,10 @@
       <div class="tc-title-lg">Senior Managing Director, Investments</div>
       <p class="tc-bio">Co-founder of the LAAA Team at Marcus &amp; Millichap. UC Santa Barbara graduate in Economics and former Division I golfer (Big West Golfer of the Year, UCSB Male Athlete of the Year). Glen launched at M&amp;M in 2014 and was named SFV Business Journal Rookie of the Year by 2016. He has closed 450+ transactions and $1.4B in volume across LA and Ventura / Santa Barbara counties.</p>
       <div class="tc-contact-lg">
+        <a href="tel:+18182122808" style="font-size:18px;font-weight:700;color:#0a2540;display:block;margin-bottom:6px">(818) 212-2808</a>
         <a href="mailto:Glen.Scher@marcusmillichap.com">Glen.Scher@marcusmillichap.com</a><br>
-        <a href="tel:+18182122808">(818) 212-2808</a> &middot; CalDRE #01962976
+        <span style="color:#666;font-size:12px">CalDRE #01962976</span><br>
+        <a href="https://www.laaa.com" target="_blank" rel="noopener" style="color:#b8985a;font-size:12px;font-weight:600">www.laaa.com &rarr;</a>
       </div>
     </div>
     <div class="team-card">
@@ -468,8 +693,10 @@
       <div class="tc-title-lg">Managing Director, Investments</div>
       <p class="tc-bio">Managing Director at Marcus &amp; Millichap and co-founder of the Agnew | Serling Group, based in the firm's Encino office. Since joining in 2014, Ryan has cultivated long-standing owner relationships across Los Angeles County in office, industrial, retail, and land / development. He graduated with honors from Ithaca College and was promoted to Managing Director Investments in 2025.</p>
       <div class="tc-contact-lg">
+        <a href="tel:+18182122725" style="font-size:18px;font-weight:700;color:#0a2540;display:block;margin-bottom:6px">(818) 212-2725</a>
         <a href="mailto:ryan.serling@marcusmillichap.com">ryan.serling@marcusmillichap.com</a><br>
-        <a href="tel:+18182122725">(818) 212-2725</a> &middot; CalDRE #01920619
+        <span style="color:#666;font-size:12px">CalDRE #01920619</span><br>
+        <a href="https://agnewserling.com" target="_blank" rel="noopener" style="color:#b8985a;font-size:12px;font-weight:600">agnewserling.com &rarr;</a>
       </div>
     </div>
   </div>
@@ -492,5 +719,56 @@
   </div>
 </footer>
 
+<script>
+(function(){
+  if (typeof L === 'undefined' || !document.getElementById('comp-map')) return;
+
+  var map = L.map('comp-map', { scrollWheelZoom: false, zoomControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  var subjectIcon = L.divIcon({
+    className: '',
+    html: '<div class="pin-subject"><span class="pin-inner">&#9733;</span></div>',
+    iconSize: [36,36],
+    iconAnchor: [18,36],
+    popupAnchor: [0,-32]
+  });
+  function compIcon(letter){
+    return L.divIcon({
+      className: '',
+      html: '<div class="pin-comp"><span class="pin-inner">'+letter+'</span></div>',
+      iconSize: [32,32],
+      iconAnchor: [16,32],
+      popupAnchor: [0,-28]
+    });
+  }
+
+  var pins = [
+    { lat: 33.864867, lng: -118.344191, icon: subjectIcon, popup:
+      '<strong>&#9733; 18213 Prairie Ave (Subject)</strong><br>20,600 SF &middot; List $3,000,000<br><strong>PPSF $145.63</strong> &middot; <strong>PPBU $300K</strong> (SB 1123, 10 units)' },
+    { lat: 33.8155, lng: -118.3015, icon: compIcon('A'), popup:
+      '<strong>A &middot; 1639 W 228th St</strong><br>14,403 SF &middot; $2,200,000 (9/2025)<br>PPSF $152.74 &middot; PPBU ~$314K (7 units feasible)<br><em>CM-1VL &middot; Unentitled at sale</em>' },
+    { lat: 33.8366, lng: -118.3475, icon: compIcon('B'), popup:
+      '<strong>B &middot; 4903 Torrance Blvd</strong><br>12,407 SF &middot; $1,700,000 (4/2025)<br>PPSF $137.01 &middot; PPBU ~$283K (6 units feasible)<br><em>Restaurant pad &middot; Unentitled</em>' },
+    { lat: 33.8190, lng: -118.3353, icon: compIcon('C'), popup:
+      '<strong>C &middot; 3828 W 226th St</strong><br>19,646 SF &middot; $1,700,000 (12/2024)<br>PPSF $86.34 &middot; <strong>PPBU $170K</strong><br><em>Entitled 10 townhomes (near-RTI)</em>' },
+    { lat: 33.8284, lng: -118.3038, icon: compIcon('D'), popup:
+      '<strong>D &middot; 1610 W 218th St</strong><br>18,003 SF &middot; $1,975,000 (3/2022)<br>PPSF $109.70 &middot; <strong>PPBU $179,545</strong> (homes only)<br><em>Approved 11 SFR + 11 ADU post-close</em>' }
+  ];
+
+  var group = [];
+  pins.forEach(function(p){
+    var m = L.marker([p.lat, p.lng], { icon: p.icon }).bindPopup(p.popup);
+    m.addTo(map);
+    group.push(m);
+  });
+
+  var fg = L.featureGroup(group);
+  map.fitBounds(fg.getBounds().pad(0.18));
+})();
+</script>
 </body>
 </html>
